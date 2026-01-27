@@ -23,6 +23,11 @@ const commands = [
   },
 
   {
+    name: "serverinfo",
+    description: "Gives server info",
+  },
+
+  {
     name: "add",
     description: "Adds two numbers",
     options: [
@@ -30,27 +35,13 @@ const commands = [
         name: "first-number",
         description: "Enter first number",
         type: ApplicationCommandOptionType.Number,
-        choices: [
-          {
-            name: "one",
-            value: 1,
-          },
+        // choices: [
+        //   {
+        //     name: "one",
+        //     value: 1,
+        //   },
 
-          {
-            name: "two",
-            value: 2,
-          },
-
-          {
-            name: "three",
-            value: 3,
-          },
-
-          {
-            name: "four",
-            value: 4,
-          },
-        ],
+        // ],
         required: true,
       },
 
@@ -59,6 +50,76 @@ const commands = [
         description: "Enter second number",
         type: ApplicationCommandOptionType.Number,
         required: true,
+      },
+    ]
+  },
+
+  {
+    name: "question",
+    description: "Ask any question and get a funny random answer",
+    options: [
+      {
+        name: "query",
+        description: "Your question",
+        type: ApplicationCommandOptionType.String,
+        required: true,
+      }
+    ]
+  },
+
+  {
+    name: "8ball",
+    description: "(Will implement sometime in future lol)",
+    options: [
+      {
+        name: "enter",
+        description: "Enter anything you wish",
+        type: ApplicationCommandOptionType.String,
+        required: true,
+      }
+    ]
+  },
+
+  {
+    name: "embed",
+    description: "Sends an embed",
+    options: [
+      {
+        name: "title",
+        description: "Title of the embed",
+        type: ApplicationCommandOptionType.String,
+        required: true,
+      },
+
+      {
+        name: "description",
+        description: "Description of the embed (use /n for new line)",
+        type: ApplicationCommandOptionType.String,
+        required: true,
+      },
+
+      {
+        name: "color",
+        description: "Color for the embed (use hex value like #FFF000)",
+        type: ApplicationCommandOptionType.String,
+      },
+    ]
+  },
+
+  {
+    name: "test",
+    description: "For testing purposes only",
+    options: [
+      {
+        name: "option-one",
+        description: "Test option 1",
+        type: ApplicationCommandOptionType.String,
+      },
+
+      {
+        name: "option-two",
+        description: "Test option 2",
+        type: ApplicationCommandOptionType.String,
       },
     ]
   },
@@ -73,7 +134,7 @@ const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
     console.log("Registering slash commands....");
 
     await rest.put(
-      Routes.applicationGuildCommands(process.env.CLIENT_ID, process.env.GUILD_ID),
+      Routes.applicationCommands(process.env.CLIENT_ID),
       {
         body: commands
       }
