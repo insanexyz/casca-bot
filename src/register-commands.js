@@ -107,6 +107,19 @@ const commands = [
   },
 
   {
+    name: "ai",
+    description: "Weird ai bot",
+    options: [
+      {
+        name: "query",
+        description: "Enter query for the bot",
+        type: ApplicationCommandOptionType.String,
+        required: true,
+      }
+    ]
+  },
+
+  {
     name: "test",
     description: "For testing purposes only",
     options: [
@@ -133,12 +146,24 @@ const rest = new REST({ version: "10" }).setToken(process.env.TOKEN);
 
     console.log("Registering slash commands....");
 
+    // Register to multiple specific servers (immediate updates)
     await rest.put(
-      Routes.applicationCommands(process.env.CLIENT_ID),
-      {
-        body: commands
-      }
+      Routes.applicationGuildCommands(process.env.CLIENT_ID, "1424982467927998526"),
+      { body: commands }
     )
+    
+    await rest.put(
+      Routes.applicationGuildCommands(process.env.CLIENT_ID, "1465754117879103736"),
+      { body: commands }
+    )
+
+    // Global commands (takes up to 1 hour to propagate)
+    // await rest.put(
+    //   Routes.applicationCommands(process.env.CLIENT_ID),
+    //   {
+    //     body: commands
+    //   }
+    // )
 
     console.log("Slash commands were registered successfully ❣️ ");
   } catch (error) {

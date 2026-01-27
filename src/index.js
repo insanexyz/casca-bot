@@ -30,6 +30,8 @@ client.on("messageCreate", (message) => {
   if (message.content == "hello") {
     message.reply("hello");
   }
+
+
 })
 
 // Listen to slash commands and do
@@ -72,7 +74,10 @@ client.on("interactionCreate", (interaction) => {
   if (interaction.commandName === "embed") {
     const title = interaction.options.get("title").value;
     const description = interaction.options.get("description").value;
-    let color = interaction.options.get("color")?.value || "#FFF000";
+    let color = interaction.options.get("color").value;
+    if (color === null) {
+      color = "#FFF000";
+    }
     const embed = new EmbedBuilder()
       .setTitle(title)
       .setDescription(description)
@@ -131,6 +136,11 @@ client.on("interactionCreate", (interaction) => {
     interaction.reply(randomAnswer);
   }
 
+  if (interaction.commandName === "ai") {
+    const query = interaction.options.get("query").value;
+
+  }
+
 
   if (interaction.commandName === "test") {
     console.log(interaction.guild.iconURL());
@@ -138,6 +148,7 @@ client.on("interactionCreate", (interaction) => {
   }
 
 })
+
 
 // Detect bot
 // client.on("messageCreate", (message) => {
