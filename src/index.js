@@ -1,5 +1,6 @@
-const { Client, IntentsBitField, EmbedBuilder, Embed } = require("discord.js");
+const { Client, IntentsBitField, EmbedBuilder, Embed, messageLink } = require("discord.js");
 require("dotenv").config() // gives access to content of env file anywhere in this file
+const { OpenAI } = require("openai");
 
 const TOKEN = process.env.TOKEN;
 
@@ -58,7 +59,27 @@ client.on("interactionCreate", (interaction) => {
   // }
 
   if (interaction.commandName === "uwu") {
-    interaction.reply("uwu wow 💓 ");
+
+    const uwuResponses = [
+      "UwU you're standing kinda close~ 💕",
+      "OwO h-hey… don't look at me like that~ ✨",
+      "blushes deeply uwu stop teasing~ 🌸",
+      "UwU m-my heart just skipped… weird~ 💗",
+      "leans in a little owo is this okay~?",
+      "UwU you're dangerously charming~ ✨",
+      "tail swishes uwu someone's confident~ 🐾",
+      "OwO why is it suddenly warm in here~?",
+      "soft giggle uwu you're trouble~ 💕",
+      "UwU eye contact is illegal… stop~ 🌸",
+      "fidgets owo you noticed that~?",
+      "UwU flirting detected… engaging blush mode 💗",
+      "smirks owo bold today, aren't you~",
+      "UwU this feels like an anime moment~ ✨",
+      "heart goes doki doki uwu oh no~ 💕"
+    ];
+
+    const reply = uwuResponses[Math.floor(Math.random() * uwuResponses.length)];
+    interaction.reply(reply);
   }
 
   if (interaction.commandName === "whoami") {
@@ -136,18 +157,59 @@ client.on("interactionCreate", (interaction) => {
     interaction.reply(randomAnswer);
   }
 
-  if (interaction.commandName === "ai") {
-    const query = interaction.options.get("query").value;
 
-  }
 
 
   if (interaction.commandName === "test") {
-    console.log(interaction.guild.iconURL());
+    // console.log(interaction.guild.iconURL());
+    console.log(interaction);
     interaction.reply("Test done");
   }
 
 })
+
+
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+})
+
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isChatInputCommand()) return;
+
+  if (interaction.commandName === "ai") {
+    const query = interaction.options.get("query").value;
+    const ALLOWED_AICHAT_CHANNELS = ["1465916890936246312", "1465788754156322837"];
+
+    if (!ALLOWED_AICHAT_CHANNELS.includes(interaction.channelId)) {
+      await interaction.reply("You are not allowed to use this command here");
+      return;
+    }
+
+    await interaction.deferReply();
+
+    // openai api response
+    const response = await openai.chat.completions.create({
+      model: "gpt-5-nano",
+      messages: [
+        {
+          // name: 
+          role: "system",
+          content: "You are a pro and have dark sense of humor but always willing to help new programmers",
+        },
+        {
+          role: "user",
+          content: query,
+        }
+      ]
+    }).catch((error) => {
+      console.log("OpenAI error:\n", error);
+    })
+
+    interaction.editReply(response.choices[0].message.content);
+  }
+})
+
 
 
 // Detect bot
