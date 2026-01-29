@@ -104,11 +104,13 @@ client.on("messageCreate", (message) => {
 
 
 // Log all messages
+const LOG_CHANNEL_IDS = "1466488701709451428";
 client.on('messageCreate', async (message) => {
     // Ignore messages from bots to prevent infinite loops
     if (message.author.bot) return;
+    if (message.guildId !== "1465754117879103736") return;
 
-    const logChannel = client.channels.cache.get("1466488701709451428");
+    const logChannel = client.channels.cache.get(LOG_CHANNEL_IDS);
     if (!logChannel) return;
 
     logChannel.send(`New message from ${message.author.tag} in ${message.channel.name}: ${message.content}`);
