@@ -32,6 +32,71 @@ client.on("messageCreate", (message) => {
     message.reply("hello");
   }
 
+  if (message.content === "+rules") {
+    const embed = new EmbedBuilder()
+      .setTitle("📘Public Server Rules")
+      .setDescription(`
+        1) 🤝
+        Be Respectful
+        • Treat everyone kindly.
+        • No bullying, hate speech, racism, or discrimination.
+        • No rude, offensive, or harassing messages.
+
+        2) 🌍
+        Language Rules
+        • English is the main language.
+        • You can use other languages, but NOT to insult, hide bad behavior, or break rules.
+
+        3) 🙅
+        No Begging
+        • Don't ask for roles, permissions, or unfair advantages.
+
+        4) 🛠️
+        Follow Staff Instructions
+        • Listen to moderators and admins at all times.
+        • Don't argue or create drama with staff decisions.
+
+        5) 💬
+        No Spamming
+        • No message spam, emoji spam, or bot command spam.
+        • Raiding = instant ban.
+
+        6) 🎧
+        No Mic Spam (VC)
+        • Don't scream, blast music, or disrupt voice chats.
+        • Use push-to-talk if needed.
+
+        7) 🎭
+        No Impersonation
+        • Don't pretend to be staff
+
+        8) 🧒
+        Be Mature
+        • No unnecessary drama, fights, or attention-seeking behavior.
+        • Act responsibly
+
+        9) 🧠
+        Use Common Sense
+        • If you think it might break the rules… don't do it.
+        • Don't look for loopholes or try to bend rules.
+        `)
+      .setColor("#000000");
+
+    client.channels.cache.get("1465935638477144298").send({ embeds: [embed] });
+  }
+
+  // if (message.content.toLocaleLowerCase().includes("insane")) {
+  //   client.channels.cache.get("1466130239057821716").send("<@434738865136336896> mentioned!!");
+  // }
+
+  // if (message.content.toLocaleLowerCase().includes("ak40")) {
+  //   client.channels.cache.get("1466130239057821716").send("<@1383428957486977119> mentioned!!");
+  // }
+
+  // if (message.content.toLocaleLowerCase().includes("germ") || message.content.toLocaleLowerCase().includes("GΣЯM")) {
+  //   client.channels.cache.get("1466130239057821716").send("<@833593810444746775> mentioned!!");
+  // }
+
 
 })
 
@@ -84,6 +149,10 @@ client.on("interactionCreate", (interaction) => {
 
   if (interaction.commandName === "whoami") {
     interaction.reply("I am Casca bot working for Insane");
+  }
+
+  if (interaction.commandName === "owner") {
+
   }
 
   if (interaction.commandName === "add") {
@@ -166,6 +235,10 @@ client.on("interactionCreate", (interaction) => {
     interaction.reply("Test done");
   }
 
+  if (interaction.commandName === "set-reminder") {
+    interaction.reply("Bro, I am not your slave wtf??!!??");
+  }
+
 })
 
 
@@ -179,7 +252,7 @@ client.on("interactionCreate", async (interaction) => {
 
   if (interaction.commandName === "ai") {
     const query = interaction.options.get("query").value;
-    const ALLOWED_AICHAT_CHANNELS = ["1465916890936246312", "1465788754156322837"];
+    const ALLOWED_AICHAT_CHANNELS = ["1465916890936246312", "1465788754156322837", "1465754118630146313", "1369673178657329314"];
 
     if (!ALLOWED_AICHAT_CHANNELS.includes(interaction.channelId)) {
       await interaction.reply("You are not allowed to use this command here");
@@ -188,6 +261,25 @@ client.on("interactionCreate", async (interaction) => {
 
     await interaction.deferReply();
 
+    // Get reply type
+    const personality = interaction.options.get("personality").value;
+    let content = "";
+
+    switch (personality) {
+      case "uwu": 
+        content = "You are cute uwu chan, be full uwu, uwu bro!!. You are very very funny and not serious at all. And you are not formal. You are like everyones fav uwu waifu";
+        break;
+      case "sigma":
+        content = "You are full sigma, hold back nothing. You are extremely serious. You dont give a damn and are too arrogant."
+        break;
+      case "giga digga chad": 
+        content = "You are giga chad, you are him. You treat others like children and you are their mentor.";
+        break;
+      case "very pro nasa hacker":
+        content = "You are very pro level nasa hacker with so much knowledge even god would feel shy."
+        break;
+    }
+
     // openai api response
     const response = await openai.chat.completions.create({
       model: "gpt-5-nano",
@@ -195,7 +287,7 @@ client.on("interactionCreate", async (interaction) => {
         {
           // name: 
           role: "system",
-          content: "You are a pro and have dark sense of humor but always willing to help new programmers",
+          content: content + "And you reply in no more than 20 words!!" + "Dont sound like a robot or a teacher at all, be like a real person talking with the personality mentioned.",
         },
         {
           role: "user",
@@ -206,7 +298,12 @@ client.on("interactionCreate", async (interaction) => {
       console.log("OpenAI error:\n", error);
     })
 
-    interaction.editReply(response.choices[0].message.content);
+    if (!response) {
+      interaction.editReply("There was some error with the OPENAI api. Try again in some moments or DM Insane.");
+      return;
+    }
+
+    interaction.editReply("Your question: " + query + "\n" + "Personality: " +  personality + "\n" + "Response: " + response.choices[0].message.content);
   }
 })
 

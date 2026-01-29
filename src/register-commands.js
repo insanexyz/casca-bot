@@ -13,6 +13,11 @@ const commands = [
   },
 
   {
+    name: "owner",
+    description: "The creator of the bot. You should only reach to him if facing any errors or any issues.",
+  },
+
+  {
     name: "uwu",
     description: "UwU funny text",
   },
@@ -115,6 +120,33 @@ const commands = [
         description: "Enter query for the bot",
         type: ApplicationCommandOptionType.String,
         required: true,
+      },
+      {
+        name: "personality",
+        description: "The vibe of the bot while replying",
+        type: ApplicationCommandOptionType.String,
+        required: true,
+        choices: [
+          {
+            name: "sigma",
+            value: "sigma",
+          },
+
+          {
+            name: "uwu",
+            value: "uwu",
+          },
+
+          {
+            name: "giga digga chad",
+            value: "giga digga chad",
+          },
+
+          {
+            name: "very pro nasa hacker",
+            value: "very pro nasa hacker",
+          }
+        ]
       }
     ]
   },
@@ -136,6 +168,30 @@ const commands = [
       },
     ]
   },
+
+  {
+    name: "set-reminder",
+    description: "Lol its fake, doesnt do shit",
+    options: [
+      {
+        name: "user",
+        description: "Enter user",
+        type: ApplicationCommandOptionType.String,
+      },
+
+      {
+        name: "time",
+        description: "After how much time to remind them",
+        type: ApplicationCommandOptionType.String,
+      },
+
+      {
+        name: "message",
+        description: "Reminder message",
+        type: ApplicationCommandOptionType.String,
+      }
+    ]
+  }
 
 ]
 
