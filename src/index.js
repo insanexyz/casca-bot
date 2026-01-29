@@ -97,8 +97,22 @@ client.on("messageCreate", (message) => {
   //   client.channels.cache.get("1466130239057821716").send("<@833593810444746775> mentioned!!");
   // }
 
-
+  if (message.content.toLocaleLowerCase().includes("hitler")) {
+    message.reply("Hitler mentioned. You shall be reported to the police 🚨 🚨 !!")
+  }
 })
+
+
+// Log all messages
+client.on('messageCreate', async (message) => {
+    // Ignore messages from bots to prevent infinite loops
+    if (message.author.bot) return;
+
+    const logChannel = client.channels.cache.get("1466488701709451428");
+    if (!logChannel) return;
+
+    logChannel.send(`New message from ${message.author.tag} in ${message.channel.name}: ${message.content}`);
+});
 
 // Listen to slash commands and do
 client.on("interactionCreate", (interaction) => {
@@ -152,7 +166,7 @@ client.on("interactionCreate", (interaction) => {
   }
 
   if (interaction.commandName === "owner") {
-
+    interaction.reply("<@434738865136336896>");
   }
 
   if (interaction.commandName === "add") {
@@ -226,20 +240,30 @@ client.on("interactionCreate", (interaction) => {
     interaction.reply(randomAnswer);
   }
 
-
-
-
-  if (interaction.commandName === "test") {
-    // console.log(interaction.guild.iconURL());
-    console.log(interaction);
-    interaction.reply("Test done");
-  }
-
   if (interaction.commandName === "set-reminder") {
     interaction.reply("Bro, I am not your slave wtf??!!??");
   }
 
 })
+
+
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isChatInputCommand()) return;
+
+  if (interaction.commandName === "test") {
+    // console.log(interaction.guild.iconURL());
+    let messages = await interaction.channel.messages.fetch({limit : 12});
+
+    messages.forEach(msg => {
+
+      if (msg.author.bot) return;
+
+      console.log(msg.content);
+    });
+    interaction.reply("Test done");
+  }
+  
+});
 
 
 
@@ -259,41 +283,67 @@ client.on("interactionCreate", async (interaction) => {
       return;
     }
 
-    await interaction.deferReply();
-
     // Get reply type
     const personality = interaction.options.get("personality").value;
     let content = "";
 
     switch (personality) {
       case "uwu": 
-        content = "You are cute uwu chan, be full uwu, uwu bro!!. You are very very funny and not serious at all. And you are not formal. You are like everyones fav uwu waifu";
+        content = "You are cute uwu chan, be full uwu, uwu bro!!. You are very very funny and not serious at all. And you are not formal. You are like everyones fav uwu waifu." + "And you reply in no more than 20 words!!" + "Dont sound like a robot or a teacher at all, be like a real person talking with the personality mentioned.";
         break;
       case "sigma":
-        content = "You are full sigma, hold back nothing. You are extremely serious. You dont give a damn and are too arrogant."
+        content = "You are full sigma, hold back nothing. You are extremely serious. You dont give a damn and are too arrogant." + "And you reply in no more than 20 words!!" + "Dont sound like a robot or a teacher at all, be like a real person talking with the personality mentioned."
         break;
       case "giga digga chad": 
-        content = "You are giga chad, you are him. You treat others like children and you are their mentor.";
+        content = "You are giga chad, you are him. You treat others like children and you are their mentor." + "And you reply in no more than 20 words!!" + "Dont sound like a robot or a teacher at all, be like a real person talking with the personality mentioned.";
         break;
       case "very pro nasa hacker":
-        content = "You are very pro level nasa hacker with so much knowledge even god would feel shy."
+        content = "You are very pro level nasa hacker with so much knowledge even god would feel shy." + "And you reply in no more than 20 words!!" + "Dont sound like a robot or a teacher at all, be like a real person talking with the personality mentioned."
         break;
     }
+
+
+    // The conversations array have one system prompt and 5 other from user and casca bot and no more than that as its created each time from fresh
+    let conversations = [];
+    conversations.push({
+      role: "system",
+      content: content,
+    })
+
+    let previousMessages = await interaction.channel.messages.fetch({ limit: 5 });
+    previousMessages.reverse();
+
+    previousMessages.forEach((msg) => {
+
+      // If message is from some other bot except casca then ignore
+      if (msg.author.bot && msg.author.id !== client.user.id) return;
+
+      // sanitize usernames as openai dont allow any special characters. remove all spaces with _ and remove special characters
+      const username = msg.author.username.replace(/\s+/g, '_').replace(/[^\w\s]/gi, '');
+
+      if (msg.author.id === client.user.id) {
+        conversations.push({
+          role: "assistant",
+          name: username,
+          content: msg.content,
+        });
+
+        return;
+      }
+
+      conversations.push({
+        role: "user",
+        name: username,
+        content: msg.content,
+      })
+    })
+
+    await interaction.deferReply();
 
     // openai api response
     const response = await openai.chat.completions.create({
       model: "gpt-5-nano",
-      messages: [
-        {
-          // name: 
-          role: "system",
-          content: content + "And you reply in no more than 20 words!!" + "Dont sound like a robot or a teacher at all, be like a real person talking with the personality mentioned.",
-        },
-        {
-          role: "user",
-          content: query,
-        }
-      ]
+      messages: conversations
     }).catch((error) => {
       console.log("OpenAI error:\n", error);
     })
