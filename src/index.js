@@ -1,6 +1,7 @@
-const { Client, IntentsBitField, EmbedBuilder, Embed, messageLink } = require("discord.js");
+const { Client, IntentsBitField, EmbedBuilder, Embed, messageLink, ActivityType } = require("discord.js");
 require("dotenv").config() // gives access to content of env file anywhere in this file
 const { OpenAI } = require("openai");
+const { getRandomInt } = require("./utils.js");
 
 const TOKEN = process.env.TOKEN;
 
@@ -15,71 +16,110 @@ const client = new Client({
   ]
 })
 
+let status = [
+  {
+    name: "CornHub",
+    type: ActivityType.Streaming,
+    url: "https://www.youtube.com/watch?v=6UFjzQXpd-Q"
+  },
+  {
+    name: "Blowing Insane",
+    tupe: ActivityType.Playing
+  },
+  {
+    name: "Giving head to Insane",
+    tupe: ActivityType.Playing
+  },
+  {
+    name: "404 Server",
+    type: ActivityType.Watching
+  },
+  {
+    name: "Cute girl screaming",
+    type: ActivityType.Listening
+  }
+]
+
 client.on("clientReady", (cl) => {
   console.log(`${cl.user.tag} is ready and online 🟢 !!`);
+
+  // client.user.setActivity({
+  // {
+
+  // }
+  // })
+
+  setInterval(() => {
+    let random = getRandomInt(0, status.length - 1);
+    client.user.setActivity(status[random]);
+  }, 10000)
 })
+
 
 // Basic
 client.on("messageCreate", (message) => {
 
   // console.log(typeof message);
 
-  if (message.author.id === "1429448834282688654") {
+  if (message.author.id === "1467947205049450668") {
     return;
   }
 
   if (message.content == "hello") {
-    message.reply("hello");
+    const x = getRandomInt(0, 1);
+    if (x) {
+      message.reply("https://nohello.net");
+    }
   }
 
   if (message.content === "+rules") {
     const embed = new EmbedBuilder()
       .setTitle("📘Public Server Rules")
       .setDescription(`
-        1) 🤝
-        Be Respectful
-        • Treat everyone kindly.
-        • No bullying, hate speech, racism, or discrimination.
-        • No rude, offensive, or harassing messages.
+1) 🤝
+Be Respectful
+• Treat everyone kindly.
+• No bullying, hate speech, racism, or discrimination.
+• No rude, offensive, or harassing messages.
 
-        2) 🌍
-        Language Rules
-        • English is the main language.
-        • You can use other languages, but NOT to insult, hide bad behavior, or break rules.
+2) 🌍
+Language Rules
+• English is the main language.
+• You can use other languages, but NOT to insult, hide bad behavior, or break rules.
 
-        3) 🙅
-        No Begging
-        • Don't ask for roles, permissions, or unfair advantages.
+3) 🙅
+No Begging
+• Don't ask for roles, permissions, or unfair advantages.
 
-        4) 🛠️
-        Follow Staff Instructions
-        • Listen to moderators and admins at all times.
-        • Don't argue or create drama with staff decisions.
+4) 🛠️
+Follow Staff Instructions
+• Listen to moderators and admins at all times.
+• Don't argue or create drama with staff decisions.
 
-        5) 💬
-        No Spamming
-        • No message spam, emoji spam, or bot command spam.
-        • Raiding = instant ban.
+5) 💬
+No Spamming
+• No message spam, emoji spam, or bot command spam.
+• Raiding = instant ban.
 
-        6) 🎧
-        No Mic Spam (VC)
-        • Don't scream, blast music, or disrupt voice chats.
-        • Use push-to-talk if needed.
+6) 🎧
+No Mic Spam (VC)
+• Don't scream, blast music, or disrupt voice chats.
+• Use push-to-talk if needed.
 
-        7) 🎭
-        No Impersonation
-        • Don't pretend to be staff
+7) 🎭
+No Impersonation
+• Don't pretend to be staff
 
-        8) 🧒
-        Be Mature
-        • No unnecessary drama, fights, or attention-seeking behavior.
-        • Act responsibly
+8) 🧒
+Be Mature
+• No unnecessary drama, fights, or attention-seeking behavior.
+• Act responsibly
 
-        9) 🧠
-        Use Common Sense
-        • If you think it might break the rules… don't do it.
-        • Don't look for loopholes or try to bend rules.
-        `)
+9) 🧠
+Use Common Sense
+• If you think it might break the rules… don't do it.
+• Don't look for loopholes or try to bend rules.
+  `)
       .setColor("#000000");
 
     client.channels.cache.get("1465935638477144298").send({ embeds: [embed] });
@@ -100,20 +140,56 @@ client.on("messageCreate", (message) => {
   if (message.content.toLocaleLowerCase().includes("hitler")) {
     message.reply("Hitler mentioned. You shall be reported to the police 🚨 🚨 !!")
   }
+
+  if (message.content === "+online") {
+    message.reply("kindly fuck off 🖕");
+  }
+
+  // if (message.content === "@<1429448834282688654>") {
+  //   message.reply("Tf you ping me for??");
+  // }
+
+  if (message.mentions.has(client.user)) {
+    if (message.author.id === "833593810444746775" || message.author.id === "1383428957486977119") {
+      message.reply("Hey!! Whats up");
+    } else {
+      message.reply("Tf you ping me for??");
+    }
+  }
+
+  // Command format: +say your message here
+  if (message.content.startsWith("!say ")) {
+
+    if (message.author.id === "434738865136336896" || message.author.id === "1383428957486977119") {
+      const text = message.content.slice(5).trim(); // remove "+say " from start
+
+      if (text.length === 0) return message.reply("You need to provide a message.");
+
+      // Delete the admin’s original command message (optional)
+      message.delete().catch(() => { });
+
+      // Send the text as the bot
+      message.channel.send(text);
+    }
+  }
+
+  if (message.content === "summon her") {
+    message.reply("<@833593810444746775>");
+  }
 })
 
 
 // Log all messages
 const LOG_CHANNEL_IDS = "1466488701709451428";
 client.on('messageCreate', async (message) => {
-    // Ignore messages from bots to prevent infinite loops
-    if (message.author.bot) return;
-    if (message.guildId !== "1465754117879103736") return;
+  // Ignore messages from bots to prevent infinite loops
+  if (message.author.bot) return;
+  if (message.guildId !== "1465754117879103736") return;
 
-    const logChannel = client.channels.cache.get(LOG_CHANNEL_IDS);
-    if (!logChannel) return;
+  const logChannel = client.channels.cache.get(LOG_CHANNEL_IDS);
+  if (!logChannel) return;
 
-    logChannel.send(`New message from ${message.author.tag} in ${message.channel.name}: ${message.content}`);
+  logChannel.send(`New message from ${message.author.tag} in ${message.channel.name}: ${message.content}`);
 });
 
 // Listen to slash commands and do
@@ -254,7 +330,7 @@ client.on("interactionCreate", async (interaction) => {
 
   if (interaction.commandName === "test") {
     // console.log(interaction.guild.iconURL());
-    let messages = await interaction.channel.messages.fetch({limit : 12});
+    let messages = await interaction.channel.messages.fetch({ limit: 12 });
 
     messages.forEach(msg => {
 
@@ -264,8 +340,37 @@ client.on("interactionCreate", async (interaction) => {
     });
     interaction.reply("Test done");
   }
-  
 });
+
+
+// Interaction listener for buttons
+client.on("interactionCreate", async (interaction) => {
+  if (!interaction.isButton()) return;
+
+  await interaction.deferReply({ ephemeral: true });
+
+  // Fetch the role from the customID of the button which is equa; to the role ID
+  const role = interaction.guild.roles.cache.get(interaction.customId);
+
+  if (!role) {
+    interaction.editReply({
+      content: "Couldnt find the role!",
+    });
+    return;
+  }
+
+  const hasRole = interaction.member.roles.cache.has(role.id);
+
+  if (hasRole) {
+    await interaction.member.roles.remove(role);
+    await interaction.editReply(`The ${role} has been removed.`);
+  } else {
+    await interaction.member.roles.add(role);
+    await interaction.editReply(`The ${role} has been added.`);
+  }
+
+})
+
 
 
 
@@ -280,23 +385,23 @@ client.on("interactionCreate", async (interaction) => {
     const query = interaction.options.get("query").value;
     const ALLOWED_AICHAT_CHANNELS = ["1465916890936246312", "1465788754156322837", "1465754118630146313", "1369673178657329314"];
 
-    if (!ALLOWED_AICHAT_CHANNELS.includes(interaction.channelId)) {
-      await interaction.reply("You are not allowed to use this command here");
-      return;
-    }
+    // if (!ALLOWED_AICHAT_CHANNELS.includes(interaction.channelId)) {
+    //   await interaction.reply("You are not allowed to use this command here");
+    //   return;
+    // }
 
     // Get reply type
     const personality = interaction.options.get("personality").value;
     let content = "";
 
     switch (personality) {
-      case "uwu": 
+      case "uwu":
         content = "You are cute uwu chan, be full uwu, uwu bro!!. You are very very funny and not serious at all. And you are not formal. You are like everyones fav uwu waifu." + "And you reply in no more than 20 words!!" + "Dont sound like a robot or a teacher at all, be like a real person talking with the personality mentioned.";
         break;
       case "sigma":
         content = "You are full sigma, hold back nothing. You are extremely serious. You dont give a damn and are too arrogant." + "And you reply in no more than 20 words!!" + "Dont sound like a robot or a teacher at all, be like a real person talking with the personality mentioned."
         break;
-      case "giga digga chad": 
+      case "giga digga chad":
         content = "You are giga chad, you are him. You treat others like children and you are their mentor." + "And you reply in no more than 20 words!!" + "Dont sound like a robot or a teacher at all, be like a real person talking with the personality mentioned.";
         break;
       case "very pro nasa hacker":
@@ -355,34 +460,9 @@ client.on("interactionCreate", async (interaction) => {
       return;
     }
 
-    interaction.editReply("Your question: " + query + "\n" + "Personality: " +  personality + "\n" + "Response: " + response.choices[0].message.content);
+    interaction.editReply("Your question: " + query + "\n" + "Personality: " + personality + "\n" + "Response: " + response.choices[0].message.content);
   }
 })
 
-
-
-// Detect bot
-// client.on("messageCreate", (message) => {
-//   if (message.author.id !== "1429448834282688654") {
-//     if (message.author.bot) {
-
-//     }
-//   }
-// })
-
-
-
-// client.on("messageCreate", (message) => {
-
-//   let num = Number.parseInt(message.content);
-//   console.log(num);
-
-//   if (num !== NaN) {
-//     if (num - lastNumber === 1) {
-//       lastNumber++;
-//       message.react("✅");
-//     }
-//   }
-// })
 
 client.login(TOKEN);
