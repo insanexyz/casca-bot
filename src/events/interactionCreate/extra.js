@@ -45,8 +45,6 @@ module.exports = (client, interaction) => {
     interaction.reply(`${num1 + num2}`);
   }
 
-
-
   if (interaction.commandName === "serverinfo") {
     const title = "🏳️ INSANE ASYLUM - SERVER INFO";
     const description = "Welcome to Insane Asylum! 🎮\n\n" +
@@ -96,5 +94,4 @@ module.exports = (client, interaction) => {
     const randomAnswer = funnyAnswers[Math.floor(Math.random() * funnyAnswers.length)];
     interaction.reply(randomAnswer);
   }
-
 }
