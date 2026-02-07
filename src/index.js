@@ -18,36 +18,17 @@ const client = new Client({
 
 let status = [
   {
-    name: "CornHub",
-    type: ActivityType.Streaming,
-    url: "https://www.youtube.com/watch?v=6UFjzQXpd-Q"
+    name: "Watching over Insane",
+    type: ActivityType.Watching,
   },
   {
-    name: "Blowing Insane",
-    tupe: ActivityType.Playing
-  },
-  {
-    name: "Giving head to Insane",
-    tupe: ActivityType.Playing
-  },
-  {
-    name: "404 Server",
-    type: ActivityType.Watching
-  },
-  {
-    name: "Cute girl screaming",
-    type: ActivityType.Listening
+    name: "Playing in Insane's Asylum",
+    type: ActivityType.Playing
   }
 ]
 
 client.on("clientReady", (cl) => {
   console.log(`${cl.user.tag} is ready and online 🟢 !!`);
-
-  // client.user.setActivity({
-  // {
-
-  // }
-  // })
 
   setInterval(() => {
     let random = getRandomInt(0, status.length - 1);
@@ -59,9 +40,7 @@ client.on("clientReady", (cl) => {
 // Basic
 client.on("messageCreate", (message) => {
 
-  // console.log(typeof message);
-
-  if (message.author.id === "1467947205049450668") {
+  if (message.author.id === client.user.id) {
     return;
   }
 
@@ -76,65 +55,19 @@ client.on("messageCreate", (message) => {
     const embed = new EmbedBuilder()
       .setTitle("📘Public Server Rules")
       .setDescription(`
-1) 🤝
-Be Respectful
-• Treat everyone kindly.
-• No bullying, hate speech, racism, or discrimination.
-• No rude, offensive, or harassing messages.
-
-2) 🌍
-Language Rules
-• English is the main language.
-• You can use other languages, but NOT to insult, hide bad behavior, or break rules.
-
-3) 🙅
-No Begging
-• Don't ask for roles, permissions, or unfair advantages.
-
-4) 🛠️
-Follow Staff Instructions
-• Listen to moderators and admins at all times.
-• Don't argue or create drama with staff decisions.
-
-5) 💬
-No Spamming
-• No message spam, emoji spam, or bot command spam.
-• Raiding = instant ban.
-
-6) 🎧
-No Mic Spam (VC)
-• Don't scream, blast music, or disrupt voice chats.
-• Use push-to-talk if needed.
-
-7) 🎭
-No Impersonation
-• Don't pretend to be staff
-
-8) 🧒
-Be Mature
-• No unnecessary drama, fights, or attention-seeking behavior.
-• Act responsibly
-
-9) 🧠
-Use Common Sense
-• If you think it might break the rules… don't do it.
-• Don't look for loopholes or try to bend rules.
+1) Just follow discord tos
+2) Use common sense and dont be a dick
+3) Rest no rule as such
   `)
       .setColor("#000000");
 
-    client.channels.cache.get("1465935638477144298").send({ embeds: [embed] });
+    const rulesChannel = client.channels.cache.get("1469597312442699950");
+    if (!rulesChannel) return;
+    rulesChannel.send({ embeds: [embed] });
   }
 
   // if (message.content.toLocaleLowerCase().includes("insane")) {
   //   client.channels.cache.get("1466130239057821716").send("<@434738865136336896> mentioned!!");
-  // }
-
-  // if (message.content.toLocaleLowerCase().includes("ak40")) {
-  //   client.channels.cache.get("1466130239057821716").send("<@1383428957486977119> mentioned!!");
-  // }
-
-  // if (message.content.toLocaleLowerCase().includes("germ") || message.content.toLocaleLowerCase().includes("GΣЯM")) {
-  //   client.channels.cache.get("1466130239057821716").send("<@833593810444746775> mentioned!!");
   // }
 
   if (message.content.toLocaleLowerCase().includes("hitler")) {
@@ -145,24 +78,24 @@ Use Common Sense
     message.reply("kindly fuck off 🖕");
   }
 
-  // if (message.content === "@<1429448834282688654>") {
-  //   message.reply("Tf you ping me for??");
+  // if (message.mentions.has(client.user)) {
+  //   if (message.author.id === "833593810444746775" || message.author.id === "1383428957486977119") {
+  //     message.reply("Hey!! Whats up");
+  //   } else {
+  //     message.reply("Tf you ping me for??");
+  //   }
   // }
 
-  if (message.mentions.has(client.user)) {
-    if (message.author.id === "833593810444746775" || message.author.id === "1383428957486977119") {
-      message.reply("Hey!! Whats up");
-    } else {
-      message.reply("Tf you ping me for??");
-    }
-  }
+  // console.log(message.content.length);
 
   // Command format: +say your message here
-  if (message.content.startsWith("!say ")) {
+  if (message.content.startsWith("!say")) {
 
-    if (message.author.id === "434738865136336896" || message.author.id === "1383428957486977119") {
-      const text = message.content.slice(5).trim(); // remove "+say " from start
+    if (message.author.id === "434738865136336896") {
+      const text = message.content.slice(4); // remove "!say " from start, extra trim is automatic
+      console.log(text);
 
+      // This not required as if text is empty nothing happens idk why
       if (text.length === 0) return message.reply("You need to provide a message.");
 
       // Delete the admin’s original command message (optional)
@@ -172,25 +105,26 @@ Use Common Sense
       message.channel.send(text);
     }
   }
-
-  if (message.content === "summon her") {
-    message.reply("<@833593810444746775>");
-  }
 })
 
 
 // Log all messages
-const LOG_CHANNEL_IDS = "1466488701709451428";
+const LOG_CHANNEL_IDS = "1466516179110854668";
 client.on('messageCreate', async (message) => {
   // Ignore messages from bots to prevent infinite loops
   if (message.author.bot) return;
-  if (message.guildId !== "1465754117879103736") return;
+
+  // Only log my server
+  if (message.guildId !== "1424982467927998526") return;
 
   const logChannel = client.channels.cache.get(LOG_CHANNEL_IDS);
+
+  // If log channel isnt present then return
   if (!logChannel) return;
 
   logChannel.send(`New message from ${message.author.tag} in ${message.channel.name}: ${message.content}`);
 });
+
 
 // Listen to slash commands and do
 client.on("interactionCreate", (interaction) => {
@@ -321,25 +255,14 @@ client.on("interactionCreate", (interaction) => {
   if (interaction.commandName === "set-reminder") {
     interaction.reply("Bro, I am not your slave wtf??!!??");
   }
-
 })
 
 
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
-  if (interaction.commandName === "test") {
-    // console.log(interaction.guild.iconURL());
-    let messages = await interaction.channel.messages.fetch({ limit: 12 });
-
-    messages.forEach(msg => {
-
-      if (msg.author.bot) return;
-
-      console.log(msg.content);
-    });
-    interaction.reply("Test done");
-  }
+  // await interaction.deferReply();
+  interaction.reply("Yo bro");
 });
 
 
@@ -368,12 +291,11 @@ client.on("interactionCreate", async (interaction) => {
     await interaction.member.roles.add(role);
     await interaction.editReply(`The ${role} has been added.`);
   }
-
 })
 
 
 
-
+// AI chatbot code
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 })
@@ -383,8 +305,8 @@ client.on("interactionCreate", async (interaction) => {
 
   if (interaction.commandName === "ai") {
     const query = interaction.options.get("query").value;
-    const ALLOWED_AICHAT_CHANNELS = ["1465916890936246312", "1465788754156322837", "1465754118630146313", "1369673178657329314"];
-
+    
+    // const ALLOWED_AICHAT_CHANNELS = ["1465916890936246312", "1465788754156322837", "1465754118630146313", "1369673178657329314"];
     // if (!ALLOWED_AICHAT_CHANNELS.includes(interaction.channelId)) {
     //   await interaction.reply("You are not allowed to use this command here");
     //   return;

@@ -16,15 +16,15 @@ const client = new Client({
 
 const role = [
   {
-    id: "1467955552557596938",
+    id: "1469602277320036364",
     label: "hacker"
   },
   {
-    id: "1467955670409154630",
+    id: "1469602375881850965",
     label: "programmer"
   },
   {
-    id: "1467955780367028265",
+    id: "1469602347683414106",
     label: "3d artist"
   },
   {
@@ -38,9 +38,9 @@ client.on("clientReady", async (cl) => {
 
     // to send to which channel
     // const channel = await client.channels.cache.get("1467948842283569183"); // Test channel
-    const channel = await client.channels.cache.get("1468594117469667490");
+    const rolesChannel = await client.channels.cache.get("1469602593587331147");
 
-    if (!channel) {
+    if (!rolesChannel) {
       console.log("Channel does not exists !!");
       return;
     }
@@ -52,7 +52,7 @@ client.on("clientReady", async (cl) => {
       )
     });
 
-    await channel.send({
+    await rolesChannel.send({
       content: "Choose your role",
       components: [row]
     });
